@@ -1348,7 +1348,7 @@ void serial_callback(uint8_t sbyte) {
 
 bool medium_free() {
   update_modem_status();
-  if (avoid_interference && interference_detected) { return false; }
+  if (avoid_interference && interference_detected && !interference_steady) { return false; }
   return !dcd;
 }
 
@@ -1391,6 +1391,9 @@ void update_noise_floor() {
 uint8_t led_id_filter = 0;
 uint32_t interference_start = 0;
 bool interference_persists = false;
+bool interference_run = false;
+uint32_t interference_run_start = 0;
+uint32_t interference_run_last = 0;
 void update_modem_status() {
   #if MCU_VARIANT == MCU_ESP32
     portENTER_CRITICAL(&update_lock);
@@ -1417,6 +1420,16 @@ void update_modem_status() {
 
   if (interference_detected) { if (led_id_filter < LED_ID_TRIG) { led_id_filter += 1; } }
   else                       { if (led_id_filter > 0) {led_id_filter -= 1; } }
+
+  // Track how long carrier-free interference has persisted, so that
+  // medium_free() only defers to it while it is transient (see
+  // CSMA_INFR_MAX_HOLD_MS). Unsigned millis() arithmetic is wrap-safe.
+  uint32_t now = millis();
+  if (interference_detected) {
+    if (!interference_run || now-interference_run_last > CSMA_INFR_GAP_MS) { interference_run = true; interference_run_start = now; }
+    interference_run_last = now;
+  } else if (interference_run && now-interference_run_last > CSMA_INFR_GAP_MS) { interference_run = false; }
+  interference_steady = interference_run && (now-interference_run_start >= CSMA_INFR_MAX_HOLD_MS);
 
   // Handle potential false interference detection due to
   // LNA recalibration, antenna swap, moving into new RF

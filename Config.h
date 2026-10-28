@@ -113,7 +113,17 @@
 	#define CSMA_INFR_THRESHOLD_DB     11
 	#define CSMA_RFENV_RECAL_MS        2500
 	#define CSMA_RFENV_RECAL_LIMIT_DB -83
+	// Interference avoidance is for TRANSIENT energy. A carrier-free level
+	// that persists longer than this no longer blocks TX: it is part of the
+	// RF environment, and holding forever only silences the node (seen on
+	// Heltec LoRa32 v3, which can report a steady self-generated level at
+	// ~-71 dBm, above the re-calibration limit). It is still reported to
+	// the host as interference. Gaps shorter than CSMA_INFR_GAP_MS do not
+	// end a run, so a level that flickers sample to sample counts as steady.
+	#define CSMA_INFR_MAX_HOLD_MS      5000
+	#define CSMA_INFR_GAP_MS           500
 	bool interference_detected      =  false;
+	bool interference_steady        =  false;
 	bool avoid_interference         =  true;
 	int csma_slot_ms                =  CSMA_SLOT_MIN_MS;
 	unsigned long difs_ms           =  CSMA_SIFS_MS + 2*csma_slot_ms;
