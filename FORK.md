@@ -32,4 +32,8 @@ as before. The V4 LNA branch is unchanged.
 **Measured, patched, interference avoidance ON.** 40/40 delivered, including
 all 11 probes sent under -71, max 3.76 s (bounded by the cap).
 
+**Second unit.** A second Heltec v3 ran as sender, received by an RF-only RNS instance (no LAN/TCP),
+interleaved IA ON / OFF / ON: 20/20, 20/20, 20/20. With IA on, the worst cases were 5.05 s and
+4.51 s, which is the cap releasing. With IA off, the max was 0.12 s.
+
 **Builds:** heltec32_v3 and heltec32_v4 compile (ESP32 core 2.0.17).
