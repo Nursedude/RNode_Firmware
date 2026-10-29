@@ -4,6 +4,16 @@ Branch `meshforge` = upstream `markqvist/RNode_Firmware` master plus the fixes
 below. Each fix is small, board-agnostic where possible, and offered back
 upstream. Wire format and KISS protocol are unchanged.
 
+## How this fork is made
+
+This fork is developed with an AI assistant (Claude, Anthropic) under the direction of
+its maintainer (Nursedude / WH6GXZ). The maintainer found the problem, ran the bench
+measurements on real hardware and made every decision. **The code changes on this branch
+were written by the AI assistant.** Upstream treats machine-originated code as carrying
+no valid licence grant, so these patches are NOT offered upstream as code. The
+maintainer reports the findings in his own words instead. Commits written this way carry
+a `Co-Authored-By: Claude` trailer; `11d51d7` and `0042d73` predate this note and lack it.
+
 ## Fixes
 
 ### Bounded interference-avoidance hold (2026-10-28)
